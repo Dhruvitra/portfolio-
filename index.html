@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dhruvitra Vanol | Data Scientist</title>
+    
+    <!-- Professional Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Toast Notifications -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <style>
+        /* --- 1. MODERN VARIABLES (Dark Cyber Theme) --- */
+        :root {
+            --bg-dark: #0f172a;       /* Deep Slate */
+            --bg-card: #1e293b;       /* Lighter Slate */
+            --primary: #38bdf8;       /* Cyan */
+            --secondary: #818cf8;     /* Indigo */
+            --text-main: #f1f5f9;     /* White-ish */
+            --text-muted: #94a3b8;    /* Grey */
+            --glass: rgba(30, 41, 59, 0.7);
+            --gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            --shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            font-family: 'Outfit', sans-serif; 
+            overflow-x: hidden;
+        }
+
+        /* --- 2. PRELOADER --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .loader {
+            width: 50px; height: 50px; border: 3px solid var(--bg-card);
+            border-top: 3px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- 3. BACKGROUND CANVAS --- */
+        #canvas-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: -1; opacity: 0.4; pointer-events: none;
+        }
+
+        /* --- 4. NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 8%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; transition: 0.3s;
+            backdrop-filter: blur(10px); background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
+        .logo span { color: var(--primary); }
+
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; transition: 0.3s; text-decoration: none; }
+        .nav-links a:hover { color: var(--primary); }
+        
+        .btn-glow {
+            padding: 8px 20px; background: rgba(56, 189, 248, 0.1); 
+            color: var(--primary) !important; border: 1px solid var(--primary);
+            border-radius: 5px; transition: 0.3s;
+        }
+        .btn-glow:hover { background: var(--primary); color: var(--bg-dark) !important; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+
+        /* Mobile Menu */
+        .hamburger { display: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
+        .mobile-menu {
+            position: fixed; top: 0; right: -100%; width: 75%; height: 100vh;
+            background: var(--bg-card); z-index: 1001; padding: 80px 30px;
+            transition: 0.4s; box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a { font-size: 1.2rem; color: var(--text-main); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+
+        /* --- 5. HERO SECTION --- */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; 
+            padding: 0 8%; position: relative;
+        }
+        .hero-content { flex: 1; z-index: 2; }
+        
+        .badge {
+            display: inline-block; padding: 5px 15px; 
+            background: linear-gradient(90deg, rgba(56,189,248,0.2), transparent);
+            border-left: 3px solid var(--primary);
+            color: var(--primary); font-family: 'Space Grotesk'; margin-bottom: 20px;
+        }
+
+        .hero h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; margin-bottom: 15px; font-weight: 800; }
+        .hero h1 span { 
+            background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+        }
+        
+        .type-wrap { font-size: 1.5rem; color: var(--text-muted); margin-bottom: 30px; height: 30px; font-family: 'Space Grotesk'; }
+        
+        .hero-img-wrap { flex: 1; display: flex; justify-content: center; perspective: 1000px; }
+        .profile-card {
+            width: 320px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            padding: 30px; border-radius: 20px; text-align: center;
+            transform-style: preserve-3d; transition: transform 0.1s;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.1);
+        }
+        .avatar {
+            width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px;
+            background: var(--gradient); display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; color: white; font-weight: bold; border: 4px solid var(--bg-card);
+        }
+
+        /* --- 6. SECTIONS --- */
+        section { padding: 100px 8%; }
+        .section-title { font-size: 2.5rem; margin-bottom: 60px; font-family: 'Space Grotesk'; }
+        .section-title span { color: var(--primary); }
+        .section-title::after { content: ''; display: block; width: 60px; height: 4px; background: var(--primary); margin-top: 10px; }
+
+        /* --- 7. EDUCATION (TIMELINE) --- */
+        .timeline { position: relative; border-left: 2px solid rgba(255,255,255,0.1); padding-left: 30px; }
+        .timeline-item { position: relative; margin-bottom: 40px; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -36px; top: 5px;
+            width: 10px; height: 10px; background: var(--primary); border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .time-date { color: var(--primary); font-size: 0.9rem; margin-bottom: 5px; display: inline-block; font-weight: 600; }
+        .uni-card {
+            background: var(--bg-card); padding: 25px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
+        }
+        .uni-card:hover { transform: translateX(10px); border-color: var(--primary); }
+
+        /* --- 8. CERTIFICATES (FEATURED) --- */
+        .cert-card-large {
+            background: var(--bg-card); border-radius: 15px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column;
+            transition: 0.3s; max-width: 600px; margin: 0 auto;
+        }
+        .cert-card-large:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-color: var(--primary); }
+        .cert-img-container { width: 100%; height: 300px; overflow: hidden; position: relative; }
+        .cert-img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .cert-card-large:hover img { transform: scale(1.05); }
+        .cert-details { padding: 25px; text-align: center; }
+        
+        /* --- 9. PROJECTS GRID --- */
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .p-card {
+            background: var(--bg-card); border-radius: 15px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
+        }
+        .p-card:hover { transform: translateY(-10px); border-color: var(--secondary); }
+        .p-img { height: 180px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--text-muted); }
+        .p-content { padding: 25px; }
+        .tech-tag { font-size: 0.75rem; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px; margin-right: 5px; color: var(--primary); }
+
+        /* --- 10. CONTACT --- */
+        .contact-container {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 50px;
+            background: var(--bg-card); padding: 50px; border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .form-input {
+            width: 100%; padding: 15px; background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255,255,255,0.1); color: white;
+            border-radius: 8px; margin-bottom: 20px; outline: none; transition: 0.3s;
+        }
+        .form-input:focus { border-color: var(--primary); }
+        .btn-submit {
+            width: 100%; padding: 15px; background: var(--gradient);
+            border: none; color: white; font-weight: 700; border-radius: 8px; cursor: pointer;
+        }
+
+        /* --- MEDIA QUERIES --- */
+        @media (max-width: 968px) {
+            .hero { flex-direction: column; text-align: center; padding-top: 120px; }
+            .hero-img-wrap { margin-top: 50px; perspective: none; }
+            .contact-container { grid-template-columns: 1fr; padding: 30px; }
+            .nav-links { display: none; }
+            .hamburger { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. PRELOADER -->
+    <div id="preloader"><div class="loader"></div></div>
+
+    <!-- 2. PARTICLES BACKGROUND -->
+    <canvas id="canvas-bg"></canvas>
+
+    <!-- 3. NAVIGATION -->
+    <nav>
+        <div class="logo">DV<span>.</span></div>
+        <div class="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#certifications">Certifications</a>
+            <a href="#contact" class="btn-glow">Contact</a>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div style="align-self: flex-end; font-size: 1.5rem; cursor: pointer;" onclick="toggleMenu()">&times;</div>
+        <a href="#hero" onclick="toggleMenu()">Home</a>
+        <a href="#about" onclick="toggleMenu()">Education</a>
+        <a href="#projects" onclick="toggleMenu()">Projects</a>
+        <a href="#contact" onclick="toggleMenu()">Contact</a>
+    </div>
+
+    <!-- 4. HERO SECTION -->
+    <section id="hero" class="hero">
+        <div class="hero-content" data-aos="fade-right">
+            <div class="badge">Data Science Enthusiast</div>
+            <h1>Dhruvitra<br><span>Umeshbhai Vanol</span></h1>
+            <div class="type-wrap">I am a <span id="typing"></span></div>
+            <p style="color: var(--text-muted); margin-bottom: 30px; max-width: 500px;">
+                Passionate BCA Student (2024-2027) exploring the world of Data Science, Machine Learning, and Python Development.
+            </p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: flex-start;">
+                <a href="#contact" class="btn-glow" style="background: var(--primary); color: #0f172a !important;">Hire Me</a>
+                <a href="https://github.com/Dhruvitra" target="_blank" class="btn-glow"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://www.linkedin.com/in/dhruvitra-vanol-849a51321/" target="_blank" class="btn-glow"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            </div>
+        </div>
+
+        <div class="hero-img-wrap" id="cardContainer">
+            <div class="profile-card" id="tiltCard">
+                <div class="avatar">DV</div>
+                <h2 style="font-family: 'Space Grotesk';">Dhruvitra Vanol</h2>
+                <p style="color: var(--primary); font-size: 0.9rem; margin: 10px 0;">Future Data Scientist</p>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; padding-top: 20px; display: flex; justify-content: space-between;">
+                    <div><h3 style="color:white;">BCA</h3><span style="font-size:0.7rem; color:grey;">Pursuing</span></div>
+                    <div><h3 style="color:white;">10+</h3><span style="font-size:0.7rem; color:grey;">Projects</span></div>
+                    <div><h3 style="color:white;">India</h3><span style="font-size:0.7rem; color:grey;">Location</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. EDUCATION TIMELINE -->
+    <section id="about">
+        <h2 class="section-title">Education & <span>Journey</span></h2>
+        <div class="timeline" data-aos="fade-up">
+            
+            <!-- Education Item -->
+            <div class="timeline-item">
+                <span class="time-date">2024 - 2027 (Present)</span>
+                <div class="uni-card">
+                    <h3>Bachelor of Computer Applications (BCA)</h3>
+                    <h4 style="color: var(--text-muted); font-weight: 400; margin-bottom: 10px;">Silver Oak University</h4>
+                    <p style="color: #94a3b8; font-size: 0.95rem;">
+                        Currently in my 1st Year. Focusing on building a strong foundation in Programming, Database Management (DBMS), and Mathematics for Data Science.
+                    </p>
+                </div>
+            </div>
+
+             <!-- Certification Item -->
+             <div class="timeline-item">
+                <span class="time-date">2024</span>
+                <div class="uni-card">
+                    <h3>Data Science Bootcamp</h3>
+                    <h4 style="color: var(--text-muted); font-weight: 400;">Udemy</h4>
+                    <p style="color: #94a3b8; font-size: 0.95rem;">
+                        Completed comprehensive training in Python, Statistics, and Machine Learning algorithms.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 6. CERTIFICATION (IMAGE DISPLAY) -->
+    <section id="certifications">
+        <h2 class="section-title">Professional <span>Certificates</span></h2>
+        
+        <div class="cert-card-large" data-aos="zoom-in">
+            <div class="cert-img-container">
+                <!-- Direct Link to your Image -->
+                <img src="https://udemy-certificate.s3.amazonaws.com/image/UC-e3060ff3-c49d-48c8-b334-7164b1db551c.jpg" alt="Data Science Certificate">
+            </div>
+            <div class="cert-details">
+                <h3>The Complete Data Science Bootcamp</h3>
+                <p style="color: var(--text-muted); margin-bottom: 15px;">Issued by Udemy</p>
+                <a href="https://udemy-certificate.s3.amazonaws.com/image/UC-e3060ff3-c49d-48c8-b334-7164b1db551c.jpg" target="_blank" class="btn-glow" style="display: inline-block;">Verify Credential <i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. PROJECTS -->
+    <section id="projects">
+        <h2 class="section-title">Recent <span>Work</span></h2>
+        <div class="project-grid">
+            <div class="p-card" data-aos="fade-up">
+                <div class="p-img"><i class="fas fa-chart-line"></i></div>
+                <div class="p-content">
+                    <h3>Stock Prediction AI</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">LSTM model to forecast market trends.</p>
+                    <span class="tech-tag">Python</span> <span class="tech-tag">ML</span>
+                </div>
+            </div>
+            <div class="p-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="p-img"><i class="fas fa-robot"></i></div>
+                <div class="p-content">
+                    <h3>Chatbot System</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">NLP-based assistant for customer support.</p>
+                    <span class="tech-tag">NLP</span> <span class="tech-tag">Flask</span>
+                </div>
+            </div>
+            <div class="p-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="p-img"><i class="fas fa-database"></i></div>
+                <div class="p-content">
+                    <h3>Sales Dashboard</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Interactive visualization of sales data.</p>
+                    <span class="tech-tag">PowerBI</span> <span class="tech-tag">SQL</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. CONTACT FORM -->
+    <section id="contact">
+        <h2 class="section-title">Get In <span>Touch</span></h2>
+        <div class="contact-container">
+            <div data-aos="fade-right">
+                <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Let's Connect</h3>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">
+                    I am currently a student but open to internships and freelance projects.
+                </p>
+                <div style="margin-bottom: 20px;"><i class="fas fa-envelope" style="color: var(--primary);"></i> dhruviktra.rajput.1379@gmail.com</div>
+                <div style="margin-bottom: 20px;"><i class="fas fa-phone" style="color: var(--primary);"></i> +91 8320763694</div>
+                <div style="margin-bottom: 20px;"><i class="fab fa-linkedin" style="color: var(--primary);"></i> Dhruvitra Vanol</div>
+            </div>
+            <div data-aos="fade-left">
+                <form id="contact-form">
+                    <input type="text" name="from_name" placeholder="Name" class="form-input" required>
+                    <input type="email" name="from_email" placeholder="Email" class="form-input" required>
+                    <textarea name="message" rows="4" placeholder="Message" class="form-input" required></textarea>
+                    <button type="submit" class="btn-submit">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-muted);">
+        <p>&copy; 2025 Dhruvitra Umeshbhai Vanol. All Rights Reserved.</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script>
+        // 1. Preloader
+        window.onload = function() {
+            document.getElementById('preloader').style.opacity = '0';
+            setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 500);
+        }
+
+        // 2. Init Animations
+        AOS.init({ duration: 1000, once: true });
+
+        // 3. Typing Effect
+        const words = ["BCA Student", "Data Scientist", "Python Developer"];
+        let i = 0, j = 0;
+        let isDeleting = false;
+        function type() {
+            const current = words[i];
+            document.getElementById('typing').innerHTML = current.substring(0, j);
+            if(isDeleting) { j--; } else { j++; }
+            if(!isDeleting && j === current.length + 1) { isDeleting = true; setTimeout(type, 1500); return; }
+            if(isDeleting && j === 0) { isDeleting = false; i = (i+1)%words.length; }
+            setTimeout(type, isDeleting ? 50 : 100);
+        }
+        type();
+
+        // 4. Mobile Menu
+        function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
+
+        // 5. 3D Tilt Card
+        const card = document.getElementById('tiltCard');
+        const container = document.getElementById('cardContainer');
+        container.addEventListener('mousemove', (e) => {
+            if(window.innerWidth < 768) return;
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // 6. Particle Network (Dark Theme Version)
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if(this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if(this.y > canvas.height || this.y < 0) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = '#38bdf8'; ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        function initParticles() {
+            particles = [];
+            for(let i=0; i<60; i++) particles.push(new Particle());
+        }
+        function animate() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            for(let i=0; i<particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                for(let j=i; j<particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < 100) {
+                        ctx.beginPath(); ctx.strokeStyle = `rgba(56, 189, 248, ${1 - dist/100})`;
+                        ctx.lineWidth = 0.5; ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        initParticles(); animate();
+
+        // 7. EmailJS Configuration
+        // IMPORTANT: REPLACE THESE WITH YOUR KEYS FROM EMAILJS.COM
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY"); // Example: "user_123xyz"
+        })();
+
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            this.querySelector('button').innerText = 'Sending...';
+            
+            emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
+                .then(() => {
+                    Toastify({ text: "Message Sent!", backgroundColor: "#38bdf8" }).showToast();
+                    this.reset();
+                    this.querySelector('button').innerText = 'Send Message';
+                }, (err) => {
+                    Toastify({ text: "Error. Check Console.", backgroundColor: "red" }).showToast();
+                    this.querySelector('button').innerText = 'Send Message';
+                });
+        });
+    </script>
+</body>
+</html>
