@@ -68,12 +68,7 @@ export function ExitIntentPopup() {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
         >
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl"
-          >
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl transform transition-all duration-300 scale-100 opacity-100">
             <button 
               onClick={() => setIsOpen(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
@@ -104,7 +99,7 @@ export function ExitIntentPopup() {
                 No thanks, I don't want 100/100 performance
               </button>
             </div>
-          </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
