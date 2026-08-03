@@ -9,7 +9,7 @@ import CaseStudyPage from './components/CaseStudyPage';
 import BlogList from './components/BlogList';
 import BlogPage from './components/BlogPage';
 import DynamicContentPage from './components/DynamicContentPage';
-import { StickyCTA, ExitIntentPopup } from './components/CRO';
+import { StickyCTA } from './components/CRO';
 
 // Lazy load below-the-fold components for extreme Performance / Core Web Vitals optimization
 const TrustBar = lazy(() => import('./components/TrustBar'));
@@ -252,7 +252,7 @@ export default function App() {
           </Suspense>
 
           <StickyCTA />
-          <ExitIntentPopup />
+
         </motion.div>
       )}
     </>
