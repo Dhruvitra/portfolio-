@@ -7,7 +7,7 @@ export function StickyCTA() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 500) {
+      if (window.scrollY > 200) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
@@ -24,9 +24,9 @@ export function StickyCTA() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-white p-3 rounded-full shadow-2xl border border-slate-200"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-4 bg-white p-3 rounded-full shadow-2xl border border-slate-200"
         >
-          <a href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-bold hover:bg-green-600 transition-colors">
+          <a href="https://wa.me/918320763694" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-bold hover:bg-green-600 transition-colors">
             <MessageCircle className="w-5 h-5" /> WhatsApp
           </a>
           <button 
@@ -46,18 +46,28 @@ export function StickyCTA() {
 
 export function ExitIntentPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasShown, setHasShown] = useState(false);
 
   useEffect(() => {
     const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0 && !hasShown) {
+      if (e.clientY <= 0 && !sessionStorage.getItem('exitPopupShown')) {
         setIsOpen(true);
-        setHasShown(true);
+        sessionStorage.setItem('exitPopupShown', 'true');
       }
     };
     document.addEventListener('mouseleave', handleMouseLeave);
     return () => document.removeEventListener('mouseleave', handleMouseLeave);
-  }, [hasShown]);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
@@ -86,7 +96,8 @@ export function ExitIntentPopup() {
               <button 
                 onClick={() => {
                   setIsOpen(false);
-                  window.open('https://calendly.com/your-calendly-link', '_blank');
+                  window.history.pushState(null, '', '/');
+                  setTimeout(() => document.getElementById('contact')?.scrollIntoView({behavior: 'smooth'}), 100);
                 }}
                 className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors"
               >
