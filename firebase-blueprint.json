@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "submission": {
+      "title": "Submission",
+      "description": "Custom communication submission registered from the portfolio contact view",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique record identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the contact initiator"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address of the contact initiator"
+        },
+        "company": {
+          "type": "string",
+          "description": "Optional associated company or brand name"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Optional contact number for direct phone coordinate replies"
+        },
+        "budget": {
+          "type": "string",
+          "description": "Client budget bracket choice"
+        },
+        "message": {
+          "type": "string",
+          "description": "Clients detailed project specifications, goals, or message text"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The date and time of record submission"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["new", "read", "replied"],
+          "description": "The status triage lifecycle of the administrative review"
+        }
+      },
+      "required": ["id", "name", "email", "budget", "message", "timestamp", "status"]
+    }
+  },
+  "firestore": {
+    "/submissions/{submissionId}": {
+      "schema": "submission",
+      "description": "The collections of portfolio inquiries and transmissions"
+    }
+  }
+}

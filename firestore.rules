@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+
+    function incoming() { 
+      return request.resource.data; 
+    }
+
+    function existing() { 
+      return resource.data; 
+    }
+
+    function isValidSubmission(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 128
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 128
+        && (!('company' in data) || (data.company is string && data.company.size() <= 128))
+        && (!('phone' in data) || (data.phone is string && data.phone.size() <= 64))
+        && data.budget is string && data.budget.size() > 0 && data.budget.size() <= 128
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 10000
+        && data.timestamp is string && data.timestamp.size() <= 128
+        && data.status is string && (data.status == 'new' || data.status == 'read' || data.status == 'replied');
+    }
+
+    match /submissions/{submissionId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isValidId(submissionId) && isValidSubmission(incoming());
+      
+      // Allow modifications specifically for status cycling and actions, preventing core data spoofing
+      allow update: if isValidSubmission(incoming()) 
+        && incoming().id == existing().id 
+        && incoming().name == existing().name
+        && incoming().email == existing().email
+        && incoming().message == existing().message
+        && incoming().budget == existing().budget;
+        
+      allow delete: if true;
+    }
+  }
+}
